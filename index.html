@@ -28,8 +28,10 @@
     <div id="msg" class="msg"></div>
     <p class="hint">Having trouble? Check you typed the email and code exactly as provided.</p>
   </div>
+
   <script>
-    const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbx13ABF93usDzNsMzPgbx4cHUKmpITfasKz5uuJBuSkl1cpzuNqyNtsbLleBOPMrWYKYg/exec";  // 👈 replace with Apps Script deployment URL
+    // 🔗 Your Apps Script deployment URL
+    const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbx13ABF93usDzNsMzPgbx4cHUKmpITfasKz5uuJBuSkl1cpzuNqyNtsbLleBOPMrWYKYg/exec";
 
     function go(){
       const email = document.getElementById('email').value.trim();
@@ -40,18 +42,23 @@
         return;
       }
       msg.textContent = 'Checking...';
-      fetch(WEBAPP_URL + '?action=validate&email=' + encodeURIComponent(email) + '&code=' + encodeURIComponent(code))
-        .then(r => r.json())
+
+      fetch(`${WEBAPP_URL}?action=validate&email=${encodeURIComponent(email)}&code=${encodeURIComponent(code)}`)
+        .then(r => {
+          if(!r.ok) throw new Error("Server error " + r.status);
+          return r.json();
+        })
         .then(res => {
           if(res.error){
             msg.innerHTML = '<span class="err">'+res.error+'</span>';
           } else {
-            msg.innerHTML = '<span class="ok">Success. Opening your report…</span>';
-            window.location.href = WEBAPP_URL + '?action=servePdf&token=' + res.token;
+            msg.innerHTML = '<span class="ok">Success! Opening your report…</span>';
+            // Redirect to servePdf with token
+            window.location.href = `${WEBAPP_URL}?action=servePdf&token=${encodeURIComponent(res.token)}`;
           }
         })
         .catch(err => {
-          msg.innerHTML = '<span class="err">Network error: '+err+'</span>';
+          msg.innerHTML = '<span class="err">Network error: '+err.message+'</span>';
         });
     }
   </script>
