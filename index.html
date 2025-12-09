@@ -1,804 +1,156 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html>
 <head>
-  <meta charset="utf-8" />
-  <title>Digital report card access</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <base target="_top">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <style>
-    :root {
-      --navy-bg: #020617;       /* page background */
-      --card-bg: #020617;       /* card background */
-      --card-border: #1f2937;
-      --input-bg: #020617;
-      --input-border: #1f2937;
-      --input-border-focus: #22c9b5;
-      --accent: #22c9b5;        /* teal */
-      --accent-soft: rgba(34, 201, 181, 0.12);
-      --text-main: #f9fafb;
-      --text-muted: #9ca3af;
-      --error: #f97373;
-      --font-stack: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-                    sans-serif;
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    html, body {
+    body {
       margin: 0;
       padding: 0;
-      height: 100%;
-      font-family: var(--font-stack);
-      color: var(--text-main);
-      background: radial-gradient(circle at top, #0b1120, #020617 55%);
-    }
-
-    body {
+      font-family: "Inter", Arial, sans-serif;
+      background: #0A1128; /* Dark Navy */
+      color: #ffffff;
       display: flex;
+      flex-direction: column;
       align-items: center;
-      justify-content: center;
-      padding: 16px;
-    }
-
-    .shell {
-      width: 100%;
-      max-width: 520px;
-    }
-
-    .brand {
       text-align: center;
-      margin-bottom: 24px;
+      padding: 30px 15px;
     }
 
-    .brand-logo {
-      max-width: 260px;
-      height: auto;
-      display: block;
-      margin: 0 auto 16px;
+    .logo {
+      width: 240px;
+      margin-top: 20px;
+      margin-bottom: 10px;
+      opacity: 0.95;
     }
 
-    .brand-motto {
-      font-size: 0.9rem;
-      letter-spacing: 0.08em;
+    .motto {
+      font-size: 15px;
+      max-width: 500px;
+      margin-bottom: 40px;
+      letter-spacing: 1px;
       text-transform: uppercase;
-      color: var(--text-muted);
-      line-height: 1.5;
+      color: #D8E1FF;
     }
 
     .card {
-      background: linear-gradient(135deg, #020617, #020617);
-      border-radius: 24px;
-      padding: 28px 24px 24px;
-      border: 1px solid var(--card-border);
-      box-shadow:
-        0 30px 80px rgba(0,0,0,0.75),
-        0 0 0 1px rgba(15,23,42,0.8);
-    }
-
-    @media (min-width: 640px) {
-      .card {
-        padding: 32px 32px 28px;
-      }
-    }
-
-    .card-title {
-      font-size: 1.6rem;
-      font-weight: 600;
-      margin: 0 0 4px;
-    }
-
-    .card-subtitle {
-      margin: 0 0 24px;
-      font-size: 0.95rem;
-      color: var(--text-muted);
-    }
-
-    .field-label {
-      font-size: 0.85rem;
-      font-weight: 500;
-      margin-bottom: 6px;
-    }
-
-    .field-helper {
-      font-size: 0.78rem;
-      color: var(--text-muted);
-      margin-top: 4px;
-    }
-
-    .field {
-      margin-bottom: 16px;
-    }
-
-    input[type="email"],
-    input[type="text"] {
-      width: 100%;
-      padding: 10px 12px;
-      border-radius: 999px;
-      border: 1px solid var(--input-border);
-      background-color: var(--input-bg);
-      color: var(--text-main);
-      font-size: 0.95rem;
-      outline: none;
-      transition: border-color 0.18s ease, box-shadow 0.18s ease,
-                  background-color 0.18s ease, transform 0.05s ease;
-    }
-
-    input::placeholder {
-      color: #4b5563;
-    }
-
-    input[type="email"]:focus,
-    input[type="text"]:focus {
-      border-color: var(--input-border-focus);
-      box-shadow: 0 0 0 1px var(--input-border-focus),
-                  0 0 0 10px var(--accent-soft);
-      transform: translateY(-1px);
-    }
-
-    .btn-row {
-      margin-top: 8px;
-      display: flex;
-      justify-content: flex-start;
-    }
-
-    button {
-      border: none;
-      padding: 11px 26px;
-      border-radius: 999px;
-      background: radial-gradient(circle at top left, #5fffe2, var(--accent));
-      color: #022c22;
-      font-weight: 600;
-      font-size: 0.95rem;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      box-shadow:
-        0 14px 35px rgba(34,201,181,0.4),
-        0 0 0 1px rgba(15,23,42,0.8);
-      transition: transform 0.12s ease, box-shadow 0.12s ease,
-                  filter 0.12s ease;
-    }
-
-    button:hover {
-      transform: translateY(-1px);
-      box-shadow:
-        0 18px 40px rgba(34,201,181,0.55),
-        0 0 0 1px rgba(15,23,42,0.9);
-      filter: brightness(1.03);
-    }
-
-    button:active {
-      transform: translateY(0);
-      box-shadow:
-        0 10px 25px rgba(34,201,181,0.35),
-        0 0 0 1px rgba(15,23,42,0.9);
-    }
-
-    button:disabled {
-      cursor: default;
-      opacity: 0.6;
-      transform: none;
-      box-shadow:
-        0 8px 20px rgba(15,23,42,0.8),
-        0 0 0 1px rgba(15,23,42,0.9);
-    }
-
-    .btn-label-main {
-      letter-spacing: 0.02em;
-    }
-
-    .btn-pill {
-      font-size: 0.75rem;
-      padding: 2px 10px;
-      border-radius: 999px;
-      background-color: rgba(15,23,42,0.85);
-      color: var(--accent);
-      border: 1px solid rgba(15,23,42,0.9);
-    }
-
-    .status {
-      min-height: 20px;
-      margin-top: 14px;
-      font-size: 0.85rem;
-    }
-
-    .status.error {
-      color: var(--error);
-    }
-
-    .status.info {
-      color: var(--accent);
-    }
-
-    .footnote {
-      margin-top: 18px;
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      line-height: 1.5;
-    }
-
-    .email-link {
-      color: var(--accent);
-      text-decoration: none;
-    }
-
-    .email-link:hover {
-      text-decoration: underline;
-    }
-  </style>
-</head>
-<body>
-  <div class="shell">
-    <header class="brand">
-      <!-- Replace the src if you use a different file name -->
-      <img src="logo-rnis-white.png" alt="Rafa Nadal School" class="brand-logo" />
-      <div class="brand-motto">
-        Courage to try · Strength to grow · Joy to succeed
-      </div>
-    </header>
-
-    <main class="card">
-      <h1 class="card-title">Half-term snapshot</h1>
-      <p class="card-subtitle">
-        Use your child’s school email address and the access code we sent you
-        to open their report.
-      </p>
-
-      <form id="access-form" autocomplete="on" novalidate>
-        <div class="field">
-          <div class="field-label">Student email</div>
-          <input
-            id="email"
-            name="email"
-            type="email"
-            inputmode="email"
-            placeholder="student.name@student.rafanadalschool.com"
-            required
-          />
-        </div>
-
-        <div class="field">
-          <div class="field-label">Half-term access code</div>
-          <input
-            id="code"
-            name="code"
-            type="text"
-            inputmode="text"
-            autocomplete="one-time-code"
-            placeholder="e.g. 4A1B-22CD"
-            required
-          />
-          <div class="field-helper">
-            Type the code exactly as shown (letters and numbers).
-          </div>
-        </div>
-
-        <div class="btn-row">
-          <button type="submit" id="go">
-            <span class="btn-label-main">View</span>
-            <span class="btn-pill">Secure report</span>
-          </button>
-        </div>
-
-        <div id="status" class="status"></div>
-
-        <div class="footnote">
-          Having trouble? Check the email and code carefully. If you still
-          can’t access the report, please contact the school office or email
-          <br />
-          <a href="mailto:msastre@rafanadalschool.com" class="email-link">
-            msastre@rafanadalschool.com
-          </a>.
-        </div>
-      </form>
-    </main>
-  </div>
-
-  <script>
-    // >>>> Your public Apps Script web app URL (JSONP)
-    const BACKEND =
-      "https://script.google.com/macros/s/AKfycbx13ABF93usDzNsMzPgbx4cHUKmpITfasKz5uuJBuSkl1cpzuNqyNtsbLleBOPMrWYKYg/exec";
-
-    const $ = (sel) => document.querySelector(sel);
-    const form = $("#access-form");
-    const emailInput = $("#email");
-    const codeInput = $("#code");
-    const button = $("#go");
-    const statusEl = $("#status");
-
-    function setStatus(message, type) {
-      statusEl.textContent = message || "";
-      statusEl.className = "status " + (type || "");
-    }
-
-    function disableForm(disabled) {
-      button.disabled = disabled;
-      emailInput.disabled = disabled;
-      codeInput.disabled = disabled;
-    }
-
-    function handleSubmit(evt) {
-      evt.preventDefault();
-
-      const email = String(emailInput.value || "").trim().toLowerCase();
-      const code = String(codeInput.value || "").trim().toUpperCase();
-
-      if (!email || !code) {
-        setStatus("Please enter both email and access code.", "error");
-        return;
-      }
-
-      disableForm(true);
-      setStatus("Checking details…", "info");
-
-      // JSONP callback name
-      const cbName = "rn_cb_" + Date.now() + "_" + Math.floor(Math.random() * 1e6);
-
-      // Define the global callback
-      window[cbName] = function (res) {
-        cleanup();
-
-        if (!res || !res.ok) {
-          const msg =
-            (res && res.error) ||
-            "We couldn’t verify those details. Please check the email and code.";
-          setStatus(msg, "error");
-          disableForm(false);
-          return;
-        }
-
-        if (res.url) {
-          setStatus("Opening report…", "info");
-          window.location.href = res.url;
-        } else {
-          setStatus(
-            "Report found but no link was returned. Please contact the school.",
-            "error"
-          );
-          disableForm(false);
-        }
-      };
-
-      // Create the JSONP <script> tag
-      const script = document.createElement("script");
-      script.src =
-        BACKEND +
-        "?action=validate" +
-        "&email=" +
-        encodeURIComponent(email) +
-        "&code=" +
-        encodeURIComponent(code) +
-        "&callback=" +
-        encodeURIComponent(cbName);
-      script.async = true;
-      script.onerror = function () {
-        cleanup();
-        setStatus(
-          "Network error while contacting the server. Please try again in a moment.",
-          "error"
-        );
-        disableForm(false);
-      };
-
-      function cleanup() {
-        if (script.parentNode) script.parentNode.removeChild(script);
-        try {
-          delete window[cbName];
-        } catch (_) {
-          window[cbName] = undefined;
-        }
-      }
-
-      document.body.appendChild(script);
-    }
-
-    form.addEventListener("submit", handleSubmit);
-  </script>
-</body>
-</html>
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <title>Digital report card access</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <style>
-    :root {
-      --navy-bg: #020617;       /* page background */
-      --card-bg: #020617;       /* card background */
-      --card-border: #1f2937;
-      --input-bg: #020617;
-      --input-border: #1f2937;
-      --input-border-focus: #22c9b5;
-      --accent: #22c9b5;        /* teal */
-      --accent-soft: rgba(34, 201, 181, 0.12);
-      --text-main: #f9fafb;
-      --text-muted: #9ca3af;
-      --error: #f97373;
-      --font-stack: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-                    sans-serif;
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    html, body {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      font-family: var(--font-stack);
-      color: var(--text-main);
-      background: radial-gradient(circle at top, #0b1120, #020617 55%);
-    }
-
-    body {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 16px;
-    }
-
-    .shell {
-      width: 100%;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 18px;
+      padding: 35px 25px;
       max-width: 520px;
-    }
-
-    .brand {
-      text-align: center;
-      margin-bottom: 24px;
-    }
-
-    .brand-logo {
-      max-width: 260px;
-      height: auto;
-      display: block;
-      margin: 0 auto 16px;
-    }
-
-    .brand-motto {
-      font-size: 0.9rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      line-height: 1.5;
-    }
-
-    .card {
-      background: linear-gradient(135deg, #020617, #020617);
-      border-radius: 24px;
-      padding: 28px 24px 24px;
-      border: 1px solid var(--card-border);
-      box-shadow:
-        0 30px 80px rgba(0,0,0,0.75),
-        0 0 0 1px rgba(15,23,42,0.8);
-    }
-
-    @media (min-width: 640px) {
-      .card {
-        padding: 32px 32px 28px;
-      }
-    }
-
-    .card-title {
-      font-size: 1.6rem;
-      font-weight: 600;
-      margin: 0 0 4px;
-    }
-
-    .card-subtitle {
-      margin: 0 0 24px;
-      font-size: 0.95rem;
-      color: var(--text-muted);
-    }
-
-    .field-label {
-      font-size: 0.85rem;
-      font-weight: 500;
-      margin-bottom: 6px;
-    }
-
-    .field-helper {
-      font-size: 0.78rem;
-      color: var(--text-muted);
-      margin-top: 4px;
-    }
-
-    .field {
-      margin-bottom: 16px;
-    }
-
-    input[type="email"],
-    input[type="text"] {
       width: 100%;
-      padding: 10px 12px;
-      border-radius: 999px;
-      border: 1px solid var(--input-border);
-      background-color: var(--input-bg);
-      color: var(--text-main);
-      font-size: 0.95rem;
-      outline: none;
-      transition: border-color 0.18s ease, box-shadow 0.18s ease,
-                  background-color 0.18s ease, transform 0.05s ease;
+      backdrop-filter: blur(5px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 0 35px rgba(0, 0, 0, 0.4);
+      text-align: left;
     }
 
-    input::placeholder {
-      color: #4b5563;
-    }
-
-    input[type="email"]:focus,
-    input[type="text"]:focus {
-      border-color: var(--input-border-focus);
-      box-shadow: 0 0 0 1px var(--input-border-focus),
-                  0 0 0 10px var(--accent-soft);
-      transform: translateY(-1px);
-    }
-
-    .btn-row {
-      margin-top: 8px;
-      display: flex;
-      justify-content: flex-start;
-    }
-
-    button {
-      border: none;
-      padding: 11px 26px;
-      border-radius: 999px;
-      background: radial-gradient(circle at top left, #5fffe2, var(--accent));
-      color: #022c22;
+    h2 {
+      margin-top: 0;
+      font-size: 26px;
       font-weight: 600;
-      font-size: 0.95rem;
+      margin-bottom: 18px;
+      color: #ffffff;
+    }
+
+    label {
+      font-size: 15px;
+      margin-bottom: 6px;
+      display: block;
+      opacity: 0.9;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px 14px;
+      font-size: 15px;
+      border-radius: 10px;
+      border: none;
+      outline: none;
+      margin-bottom: 18px;
+      background: rgba(255, 255, 255, 0.1);
+      color: #ffffff;
+    }
+
+    .button {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 12px;
+      background: #29F2D4; /* Teal */
+      font-size: 18px;
+      font-weight: bold;
+      color: #0A1128;
       cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      box-shadow:
-        0 14px 35px rgba(34,201,181,0.4),
-        0 0 0 1px rgba(15,23,42,0.8);
-      transition: transform 0.12s ease, box-shadow 0.12s ease,
-                  filter 0.12s ease;
+      margin-top: 10px;
+      box-shadow: 0 0 25px rgba(41, 242, 212, 0.6);
+      transition: 0.2s ease-in-out;
     }
 
-    button:hover {
-      transform: translateY(-1px);
-      box-shadow:
-        0 18px 40px rgba(34,201,181,0.55),
-        0 0 0 1px rgba(15,23,42,0.9);
-      filter: brightness(1.03);
+    .button:hover {
+      box-shadow: 0 0 35px rgba(41, 242, 212, 0.85);
+      transform: translateY(-2px);
     }
 
-    button:active {
-      transform: translateY(0);
-      box-shadow:
-        0 10px 25px rgba(34,201,181,0.35),
-        0 0 0 1px rgba(15,23,42,0.9);
-    }
-
-    button:disabled {
-      cursor: default;
-      opacity: 0.6;
-      transform: none;
-      box-shadow:
-        0 8px 20px rgba(15,23,42,0.8),
-        0 0 0 1px rgba(15,23,42,0.9);
-    }
-
-    .btn-label-main {
-      letter-spacing: 0.02em;
-    }
-
-    .btn-pill {
-      font-size: 0.75rem;
-      padding: 2px 10px;
-      border-radius: 999px;
-      background-color: rgba(15,23,42,0.85);
-      color: var(--accent);
-      border: 1px solid rgba(15,23,42,0.9);
-    }
-
-    .status {
-      min-height: 20px;
-      margin-top: 14px;
-      font-size: 0.85rem;
-    }
-
-    .status.error {
-      color: var(--error);
-    }
-
-    .status.info {
-      color: var(--accent);
-    }
-
-    .footnote {
-      margin-top: 18px;
-      font-size: 0.8rem;
-      color: var(--text-muted);
+    .help {
+      margin-top: 25px;
+      font-size: 14px;
       line-height: 1.5;
+      opacity: 0.8;
     }
 
-    .email-link {
-      color: var(--accent);
-      text-decoration: none;
-    }
-
-    .email-link:hover {
-      text-decoration: underline;
+    .help a {
+      color: #29F2D4;
     }
   </style>
 </head>
+
 <body>
-  <div class="shell">
-    <header class="brand">
-      <!-- Replace the src if you use a different file name -->
-      <img src="logo-rnis-white.png" alt="Rafa Nadal School" class="brand-logo" />
-      <div class="brand-motto">
-        Courage to try · Strength to grow · Joy to succeed
-      </div>
-    </header>
 
-    <main class="card">
-      <h1 class="card-title">Half-term snapshot</h1>
-      <p class="card-subtitle">
-        Use your child’s school email address and the access code we sent you
-        to open their report.
-      </p>
+  <!-- School Logo -->
+  <img src="https://raw.githubusercontent.com/msastre-debug/report-access/main/assets/RNIS_blanco%20(1).png" 
+       class="logo">
 
-      <form id="access-form" autocomplete="on" novalidate>
-        <div class="field">
-          <div class="field-label">Student email</div>
-          <input
-            id="email"
-            name="email"
-            type="email"
-            inputmode="email"
-            placeholder="student.name@student.rafanadalschool.com"
-            required
-          />
-        </div>
+  <!-- Motto -->
+  <div class="motto">
+    Courage to try · Strength to grow · Joy to succeed
+  </div>
 
-        <div class="field">
-          <div class="field-label">Half-term access code</div>
-          <input
-            id="code"
-            name="code"
-            type="text"
-            inputmode="text"
-            autocomplete="one-time-code"
-            placeholder="e.g. 4A1B-22CD"
-            required
-          />
-          <div class="field-helper">
-            Type the code exactly as shown (letters and numbers).
-          </div>
-        </div>
+  <div class="card">
+    <h2>View report</h2>
 
-        <div class="btn-row">
-          <button type="submit" id="go">
-            <span class="btn-label-main">View</span>
-            <span class="btn-pill">Secure report</span>
-          </button>
-        </div>
+    <p>Enter the student’s <strong>school email</strong> and the <strong>access code</strong> we provided.</p>
 
-        <div id="status" class="status"></div>
+    <label>School email</label>
+    <input id="email" type="email" placeholder="student@rafanadalschool.com">
 
-        <div class="footnote">
-          Having trouble? Check the email and code carefully. If you still
-          can’t access the report, please contact the school office or email
-          <br />
-          <a href="mailto:msastre@rafanadalschool.com" class="email-link">
-            msastre@rafanadalschool.com
-          </a>.
-        </div>
-      </form>
-    </main>
+    <label>Access code</label>
+    <input id="code" type="text" placeholder="e.g. AB12-3CD4">
+
+    <button class="button" onclick="submitForm()">Open report</button>
+
+    <div class="help">
+      Having trouble? Check you typed the email and code exactly as provided.
+    </div>
   </div>
 
   <script>
-    // >>>> Your public Apps Script web app URL (JSONP)
-    const BACKEND =
-      "https://script.google.com/macros/s/AKfycbx13ABF93usDzNsMzPgbx4cHUKmpITfasKz5uuJBuSkl1cpzuNqyNtsbLleBOPMrWYKYg/exec";
-
-    const $ = (sel) => document.querySelector(sel);
-    const form = $("#access-form");
-    const emailInput = $("#email");
-    const codeInput = $("#code");
-    const button = $("#go");
-    const statusEl = $("#status");
-
-    function setStatus(message, type) {
-      statusEl.textContent = message || "";
-      statusEl.className = "status " + (type || "");
-    }
-
-    function disableForm(disabled) {
-      button.disabled = disabled;
-      emailInput.disabled = disabled;
-      codeInput.disabled = disabled;
-    }
-
-    function handleSubmit(evt) {
-      evt.preventDefault();
-
-      const email = String(emailInput.value || "").trim().toLowerCase();
-      const code = String(codeInput.value || "").trim().toUpperCase();
+    function submitForm() {
+      const email = document.getElementById("email").value.trim();
+      const code = document.getElementById("code").value.trim();
 
       if (!email || !code) {
-        setStatus("Please enter both email and access code.", "error");
+        alert("Please enter both the school email and access code.");
         return;
       }
 
-      disableForm(true);
-      setStatus("Checking details…", "info");
-
-      // JSONP callback name
-      const cbName = "rn_cb_" + Date.now() + "_" + Math.floor(Math.random() * 1e6);
-
-      // Define the global callback
-      window[cbName] = function (res) {
-        cleanup();
-
-        if (!res || !res.ok) {
-          const msg =
-            (res && res.error) ||
-            "We couldn’t verify those details. Please check the email and code.";
-          setStatus(msg, "error");
-          disableForm(false);
-          return;
-        }
-
-        if (res.url) {
-          setStatus("Opening report…", "info");
-          window.location.href = res.url;
-        } else {
-          setStatus(
-            "Report found but no link was returned. Please contact the school.",
-            "error"
-          );
-          disableForm(false);
-        }
-      };
-
-      // Create the JSONP <script> tag
-      const script = document.createElement("script");
-      script.src =
-        BACKEND +
-        "?action=validate" +
-        "&email=" +
-        encodeURIComponent(email) +
-        "&code=" +
-        encodeURIComponent(code) +
-        "&callback=" +
-        encodeURIComponent(cbName);
-      script.async = true;
-      script.onerror = function () {
-        cleanup();
-        setStatus(
-          "Network error while contacting the server. Please try again in a moment.",
-          "error"
-        );
-        disableForm(false);
-      };
-
-      function cleanup() {
-        if (script.parentNode) script.parentNode.removeChild(script);
-        try {
-          delete window[cbName];
-        } catch (_) {
-          window[cbName] = undefined;
-        }
-      }
-
-      document.body.appendChild(script);
+      google.script.run
+        .withFailureHandler(err => alert("Error: " + err.message))
+        .handleForm(email, code);
     }
-
-    form.addEventListener("submit", handleSubmit);
   </script>
+
 </body>
 </html>
-
 
