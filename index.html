@@ -145,9 +145,11 @@
         return;
       }
 
-      google.script.run
-        .withFailureHandler(err => alert("Error: " + err.message))
-        .handleForm(email, code);
+      // ⭐⭐⭐ IMPORTANT: Your Apps Script Web App URL ⭐⭐⭐
+      const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbx13ABF93usDzNsMzPgbx4cHUKmpITfasKz5uuJBuSkl1cpzuNqyNtsbLleBOPMrWYKYg/exec";
+
+      // Redirect to Apps Script to validate & open PDF
+      window.location.href = `${WEBAPP_URL}?email=${encodeURIComponent(email)}&code=${encodeURIComponent(code)}`;
     }
   </script>
 
