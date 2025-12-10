@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <base target="_top">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Report Access</title>
 
   <style>
     body {
       margin: 0;
       padding: 0;
       font-family: "Inter", Arial, sans-serif;
-      background: #0A1128; /* Dark Navy */
+      background: #0A1128; /* Dark navy */
       color: #ffffff;
       display: flex;
       flex-direction: column;
@@ -40,10 +40,9 @@
       padding: 35px 25px;
       max-width: 520px;
       width: 100%;
-      backdrop-filter: blur(5px);
+      text-align: left;
       border: 1px solid rgba(255, 255, 255, 0.12);
       box-shadow: 0 0 35px rgba(0, 0, 0, 0.4);
-      text-align: left;
     }
 
     h2 {
@@ -67,7 +66,6 @@
       font-size: 15px;
       border-radius: 10px;
       border: none;
-      outline: none;
       margin-bottom: 18px;
       background: rgba(255, 255, 255, 0.1);
       color: #ffffff;
@@ -76,8 +74,8 @@
     .button {
       width: 100%;
       padding: 14px;
-      border: none;
       border-radius: 12px;
+      border: none;
       background: #29F2D4; /* Teal */
       font-size: 18px;
       font-weight: bold;
@@ -85,34 +83,27 @@
       cursor: pointer;
       margin-top: 10px;
       box-shadow: 0 0 25px rgba(41, 242, 212, 0.6);
-      transition: 0.2s ease-in-out;
+      transition: 0.2s;
     }
 
     .button:hover {
-      box-shadow: 0 0 35px rgba(41, 242, 212, 0.85);
       transform: translateY(-2px);
+      box-shadow: 0 0 35px rgba(41, 242, 212, 0.85);
     }
 
     .help {
       margin-top: 25px;
       font-size: 14px;
-      line-height: 1.5;
       opacity: 0.8;
-    }
-
-    .help a {
-      color: #29F2D4;
     }
   </style>
 </head>
 
 <body>
 
-  <!-- School Logo -->
-  <img src="https://raw.githubusercontent.com/msastre-debug/report-access/main/assets/RNIS_blanco%20(1).png" 
+  <img src="https://raw.githubusercontent.com/msastre-debug/report-access/main/assets/RNIS_blanco%20(1).png"
        class="logo">
 
-  <!-- Motto -->
   <div class="motto">
     Courage to try · Strength to grow · Joy to succeed
   </div>
@@ -136,6 +127,9 @@
   </div>
 
   <script>
+    // ★★ CHANGE THIS TO *YOUR* APPS SCRIPT URL ★★
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx13ABF93usDzNsMzPgbx4cHUKmpITfasKz5uuJBuSkl1cpzuNqyNtsbLleBOPMrWYKYg/exec";
+
     function submitForm() {
       const email = document.getElementById("email").value.trim();
       const code = document.getElementById("code").value.trim();
@@ -145,14 +139,30 @@
         return;
       }
 
-      // ⭐⭐⭐ IMPORTANT: Your Apps Script Web App URL ⭐⭐⭐
-      const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbx13ABF93usDzNsMzPgbx4cHUKmpITfasKz5uuJBuSkl1cpzuNqyNtsbLleBOPMrWYKYg/exec";
+      // Build a unique callback name each time
+      const callbackName = "cb_" + Math.floor(Math.random() * 999999);
 
-      // Redirect to Apps Script to validate & open PDF
-      window.location.href = `${WEBAPP_URL}?email=${encodeURIComponent(email)}&code=${encodeURIComponent(code)}`;
+      // Attach callback function globally
+      window[callbackName] = function (response) {
+        if (response.ok) {
+          window.location.href = response.url; // redirect to PDF
+        } else {
+          alert(response.error || "Something went wrong.");
+        }
+
+        // Cleanup
+        delete window[callbackName];
+      };
+
+      // Create JSONP request
+      const script = document.createElement("script");
+      script.src = `${SCRIPT_URL}?action=validate&email=${encodeURIComponent(email)}&code=${encodeURIComponent(code)}&callback=${callbackName}`;
+      document.body.appendChild(script);
     }
   </script>
 
 </body>
 </html>
+
+
 
